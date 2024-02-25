@@ -37,5 +37,4 @@ function sendActiveUrltoExt() {
   modifyInputsInBody(modifiedInputs);
 }
 
-// TODO: actual injection of data
 // TODO: actual retrieval of email and password
