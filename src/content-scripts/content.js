@@ -1,13 +1,41 @@
-const {getCompatibleInputs, injectData, getEmailandPassword} = require('../utils');
+const {
+  getCompatibleInputs,
+  injectData,
+  getEmailandPassword,
+  getAllInputs,
+  modifyInputsInBody,
+} = require("../utils");
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.message === "clicked_browser_action") {
-        let inputs = document.querySelectorAll("input");
-        let compatibleInputs = getCompatibleInputs(inputs);
-        let data = getEmailandPassword();
+function sendActiveUrltoExt() {
+  let data = {
+    username: "",
+    password: "",
+  };
+  let URL = document.URL;
 
-        if (compatibleInputs[0] !== "" || compatibleInputs[1] !== "") {
-            injectData(compatibleInputs, data);
-        }
+  // Post it to the extention to fetch user and password
+  // for the required domain and sub
+  chrome.runtime.sendMessage("parent_url:" + URL, (response) => {
+    if (response !== null) {
+      let res = Object(response);
+      data.username = res.username;
+      data.password = res.password;
     }
-});
+  });
+
+  return data;
+}
+
+// entry point
+{
+  const DATA = sendActiveUrltoExt();
+  let inputs = getCompatibleInputs(getAllInputs());
+
+  let modifiedInputs = injectData(inputs, DATA);
+
+  // reset modified inputs
+  modifyInputsInBody(modifiedInputs);
+}
+
+// TODO: actual injection of data
+// TODO: actual retrieval of email and password
