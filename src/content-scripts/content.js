@@ -28,7 +28,9 @@ function sendActiveUrltoExt() {
 
 // entry point
 {
-  const DATA = sendActiveUrltoExt();
+  const response = sendActiveUrltoExt();
+  let DATA = JSON.parse(response);
+
   let inputs = getCompatibleInputs(getAllInputs());
 
   let modifiedInputs = injectData(inputs, DATA);
@@ -36,5 +38,3 @@ function sendActiveUrltoExt() {
   // reset modified inputs
   modifyInputsInBody(modifiedInputs);
 }
-
-// TODO: actual retrieval of email and password
