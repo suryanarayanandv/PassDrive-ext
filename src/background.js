@@ -13,7 +13,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     // TODO: native impl test + register
     let port = chrome.runtime.connectNative("com.passdrive-service");
-    port.postMessage({ data: JSON.stringify(domain_sub) });
+    let data = {
+      type: 'GET',
+      data: JSON.stringify(domain_sub)
+    }
+    port.postMessage(JSON.stringify(data));
 
     port.onMessage.addListener(function (msg) {
       let data = JSON.parse(msg);
