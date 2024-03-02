@@ -1,0 +1,17 @@
+const SUCCESS = 200;
+const FAILURE = 400;
+const NOT_FOUND = 404;
+const CREATED = 201;
+const UNAUTHORIZED = 401;
+const LOGGEDIN = 204;
+const LOGGEDOUT = 403;
+
+export {
+    SUCCESS,
+    FAILURE,
+    NOT_FOUND,
+    CREATED,
+    UNAUTHORIZED,
+    LOGGEDIN,
+    LOGGEDOUT
+}
