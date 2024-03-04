@@ -18,12 +18,25 @@ function getAllInputs(parentElement, inputsArray) {
   }
 }
 
+function getAllButtons(parentsElement, buttonsArray) {
+  var children = parentsElement.children;
+  for (var i = 0; i < children.length; i++) {
+    var child = children[i];
+    if ( (child.tagName === 'BUTTON') || (child.tagName === 'INPUT' && child.type === 'submit') ) {
+      buttonsArray.push(child);
+    }
+    if (child.children.length > 0) {
+      getAllButtons(child, buttonsArray);
+    }
+  }
+}
+
 /**
  * @param {Array(HTMLInputElement)} inputs
  * @returns array of compatible inputs
  */
 function getCompatibleInputs(inputs) {
-  let compatibleInputs = ["", ""];
+  let compatibleInputs = [new HTMLInputElement(), new HTMLInputElement()];
   inputs.forEach((element) => {
     if (
       (element instanceof HTMLInputElement &&
@@ -39,6 +52,26 @@ function getCompatibleInputs(inputs) {
   });
 
   return compatibleInputs;
+}
+
+/**
+ * @param {Array(HTMLInputElement)} buttons
+ * @returns HTMLButtonElement
+ */
+function getCompatibleButton(buttons) {
+  const POSSIBLE_HINTS = ["launch", "submit", "next", "save", "login", "signin"]
+  let button = null;
+  buttons.forEach((element) => {
+    if (element instanceof HTMLButtonElement) {
+      POSSIBLE_HINTS.forEach((value) => {
+        if ( String(element.outerHTML).toLowerCase().includes(value) ) {
+          button = element;
+        }
+      });
+    }
+  });
+
+  return button;
 }
 
 function getDomainAndSubdomain(url) {
@@ -77,11 +110,11 @@ function modifyInputsInBody(inputArray) {
  * @returns
  */
 function injectData(compatibleInputs, data) {
-  if (compatibleInputs[0] != "") compatibleInputs[0].value = data.email;
+  if (data && compatibleInputs[0] != "") compatibleInputs[0].value = data.username;
 
-  if (compatibleInputs[1] != "") compatibleInputs[1].value = data.password;
+  if (data && compatibleInputs[1] != "") compatibleInputs[1].value = data.password;
 
-  return inputs;
+  return compatibleInputs;
 }
 
 
