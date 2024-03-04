@@ -1,3 +1,4 @@
+const { SUCCESS } = require("./consts");
 const { getDomainAndSubdomain } = require("./utils");
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -6,25 +7,49 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     password: "",
   };
 
+  let requestType = String(message).split('_')[0];
   // parse message
-  if (String(message).includes("parent_url")) {
-    let URL = String(message).split(":")[1];
-    let domain_sub = getDomainAndSubdomain(URL);
-
-    // TODO: native impl test + register
-    let port = chrome.runtime.connectNative("com.passdrive-service");
-    let data = {
-      type: 'GET',
-      data: JSON.stringify(domain_sub)
+  if (requestType === "POST") {
+    if (String(message).includes("_url")) {
+      let URL = String(message).split(":")[1];
+      let domain_sub = getDomainAndSubdomain(URL);
+  
+      let port = chrome.runtime.connectNative("com.passdrive-service");
+      let data = {
+        type: 'GET_domain',
+        data: JSON.stringify(domain_sub)
+      }
+      port.postMessage(JSON.stringify(data));
+  
+      port.onMessage.addListener(function (msg) {
+        let DATA = JSON.parse(msg);
+        if (DATA.status === SUCCESS) {
+          response.username = DATA.data.username;
+          response.password = DATA.data.password;
+        }
+      });
+  
+      sendResponse(JSON.stringify(response));
     }
-    port.postMessage(JSON.stringify(data));
+  
+    if (String(message).includes("_new")) {
+      let temp = String(message).split(":");
+      let URL = temp[1];
+      let domain_sub = getDomainAndSubdomain(URL);
 
-    port.onMessage.addListener(function (msg) {
-      let data = JSON.parse(msg);
-      response.username = data.username;
-      response.password = data.password;
-    });
+      let userPass = {
+        domain: domain_sub.domain,
+        subdomain: domain_sub.subdomain,
+        username: temp[1],
+        password: temp[2]
+      }
 
-    sendResponse(JSON.stringify(response));
+      let port = chrome.runtime.connectNative("com.passdrive-service");
+      let DATA = {
+        type: 'POST_domain',
+        data: JSON.stringify(userPass)
+      }
+      port.postMessage(JSON.stringify(DATA));
+    }
   }
 });
