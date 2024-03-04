@@ -1,5 +1,4 @@
 const { SUCCESS, UNAUTHORIZED, LOGGEDIN } = require("./consts");
-
 {
     // is loggedon toggle
     let isLoggedOn = false;
@@ -14,7 +13,6 @@ const { SUCCESS, UNAUTHORIZED, LOGGEDIN } = require("./consts");
     if ( errorDiv.style.display === 'block' && loginDiv.getElementById('masterp').value !== "" ) {
         errorDiv.style.display = 'none';
     }
-
     // login button
     let loginBtn = document.getElementById('login-btn');
     loginBtn.addEventListener('click', () => {
@@ -27,7 +25,7 @@ const { SUCCESS, UNAUTHORIZED, LOGGEDIN } = require("./consts");
         port.onMessage.addListener(function (msg) {
             let data = JSON.parse(msg);
             console.log(data);
-            if (data.status === LOGGEDIN) {
+        if (data.status === LOGGEDIN) {
                 isLoggedOn = true;
                 loginDiv.style.display = 'none';
                 loggedDiv.style.display = 'block';
