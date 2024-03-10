@@ -48,6 +48,7 @@ async function sendActiveUrltoExt() {
 
       // save
       submitButton.addEventListener('click', async (event) => {
+        let inputs = getCompatibleInputs(getAllInputs());
         let inputsArray = [inputs[0].value.toString(), inputs[1].value.toString()]
         let status = "default";
         
@@ -82,6 +83,18 @@ async function sendActiveUrltoExt() {
     // accept ignore model
     if (accept) {
       modifyInputsInBody(modifiedInputs);
+    } else {
+      let URL = document.URL;
+      let inputs = getCompatibleInputs(getAllInputs());
+      let inputsArray = [inputs[0].value.toString(), inputs[1].value.toString()]
+
+      chrome.runtime.sendMessage("PUT_domain:" + URL + ":" + inputsArray[0] + ":" + inputsArray[1], (response) => {
+        if (response.status === SUCCESS) {
+          console.log("updated");
+        } else {
+          console.log("failed to update");
+        }
+      });
     }
   }
 }
