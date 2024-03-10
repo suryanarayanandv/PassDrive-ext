@@ -1,3 +1,3 @@
-[ ] accept / ignore model
+[X] accept / ignore model
 [ ] delete / update interface
-[ ] save / ignore model
+[X] save / ignore model
