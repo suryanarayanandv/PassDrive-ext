@@ -5,6 +5,8 @@ const { SUCCESS, UNAUTHORIZED, LOGGEDIN } = require("./consts");
     let loginDiv = document.getElementById('login');
     let loggedDiv = document.getElementById('logged');
     let errorDiv = document.getElementById('error');
+    let saveIgnoreDiv = document.getElementById('save_ignore');
+    let acceptIgnoreDiv = document.getElementById('accept_ignore');
     
     if (!isLoggedOn) {
         loginDiv.style.display = 'block';
@@ -36,4 +38,44 @@ const { SUCCESS, UNAUTHORIZED, LOGGEDIN } = require("./consts");
             }
         });
     });
+
+    // save / ignore model
+    let saveBtn = document.getElementById('save-btn');
+    let ignoreBtn = document.getElementById('ignore-btn');
+    let acceptBtn = document.getElementById('accept-btn');
+    let ignoreB = document.getElementById('ignore-b');
+
+    chrome.storage.sync.set({ "save": "default" });
+    chrome.storage.sync.set({ "accept": "default" });
+    chrome.storage.sync.set({ "detected": "default" });
+
+    saveBtn.addEventListener('click', () => {
+        chrome.storage.sync.set({ "save": true });
+    });
+
+    ignoreBtn.addEventListener('click', () => {
+        chrome.storage.sync.set({ "save": false });
+    });
+
+    acceptBtn.addEventListener('click', () => {
+        chrome.storage.sync.set({ "accept": true });
+    });
+
+    ignoreB.addEventListener('click', () => {
+        chrome.storage.sync.set({ "accept": false });
+    })
+    
+    let isDetected = "default";
+    while ( isDetected === "default" ) {
+        let temp = await chrome.storage.sync.get("detected");
+        isDetected = temp.detected;
+    }
+
+    if ( isDetected ) {
+        acceptIgnoreDiv.style.display = 'block';
+    } else {
+        saveIgnoreDiv.style.display = 'block';
+    }
+
+    // when and how to enable display: block for the ignore model and save model = done
 }

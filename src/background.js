@@ -1,6 +1,15 @@
 const { SUCCESS } = require("./consts");
 const { getDomainAndSubdomain } = require("./utils");
 
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+    console.log(
+      `Storage key "${key}" in namespace "${namespace}" changed.`,
+      `Old value was "${oldValue}", new value is "${newValue}".`
+    );
+  }
+});
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   let response = {
     username: "",
