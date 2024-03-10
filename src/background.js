@@ -49,8 +49,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       let userPass = {
         domain: domain_sub.domain,
         subdomain: domain_sub.subdomain,
-        username: temp[1],
-        password: temp[2]
+        username: temp[2],
+        password: temp[3]
       }
 
       let port = chrome.runtime.connectNative("com.passdrive-service");
@@ -61,4 +61,36 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       port.postMessage(JSON.stringify(DATA));
     }
   }
+
+  else if (requestType === "PUT") {
+    if ( String(message).includes("_login") ) {
+      let temp = String(message).split(":");
+      let master = temp[1];
+      let port = chrome.runtime.connectNative("com.passdrive-service");
+      let DATA = {
+        type: 'POST_login',
+        data: JSON.stringify({ master })
+      }
+      port.postMessage(JSON.stringify(DATA));
+    }
+
+    else if ( String(message).includes("_domain") ) {
+      let temp = String(message).split(":");
+      let domain_sub = getDomainAndSubdomain(temp[1]);
+      let data = {
+        domain: domain_sub.domain,
+        subdomain: domain_sub.subdomain,
+        username: temp[2],
+        password: temp[3]
+      }
+
+      let port = chrome.runtime.connectNative("com.passdrive-service");
+      let DATA = {
+        type: 'POST_domain',
+        data: JSON.stringify(data)
+      }
+      port.postMessage(JSON.stringify(DATA));
+    }
+  }
+
 });
